@@ -37,16 +37,14 @@ This project was developed as a portfolio project with a strong focus on:
 
 # 🎯 Problem Solved
 
-Before the system:
-
+### Before the system:
 - Manual tracking in spreadsheets
 - Manual tax calculations
 - Difficult profit visualization
 - Risk of inconsistencies
 - No centralized metrics
 
-After MyFreela:
-
+### After MyFreela:
 - Automated gross/net calculation
 - Structured hour tracking per client and task
 - Recurring and one-time expense control
@@ -60,12 +58,11 @@ After MyFreela:
 
 The application follows a decoupled architecture:
 
-React (SPA Frontend)
-↓
-Node.js (REST API Backend)
-↓
+React (SPA Frontend)  
+↓  
+Node.js (REST API Backend)  
+↓  
 MySQL (Relational Database)
-
 
 ## Key Architecture Decisions
 
@@ -125,10 +122,11 @@ This structure allows:
 
 Automated financial calculation:
 
+```
 grossAmount = totalHours × hourlyRate
 taxAmount = grossAmount × (taxPercentage / 100)
 netAmount = grossAmount − taxAmount
-
+```
 
 This eliminates manual calculation errors and provides reliable financial insights.
 
@@ -138,6 +136,7 @@ This eliminates manual calculation errors and provides reliable financial insigh
 
 The project follows a clear separation between backend, frontend and infrastructure layers.
 
+```
 myfreela/
 │
 ├── backend/                 # REST API (Node.js + Express)
@@ -167,6 +166,7 @@ myfreela/
 │
 ├── docker-compose.yml       # Production environment
 └── docker-compose.dev.yml   # Development environment
+```
 
 ---
 
@@ -177,98 +177,108 @@ myfreela/
 ```bash
 git clone https://github.com/your-username/myfreela.git
 cd myfreela
+```
 
-2️⃣ Configure environment variables
+## 2️⃣ Configure environment variables
+
+```bash
 cp backend/.env.example backend/.env
+```
 
-3️⃣ Start containers
+## 3️⃣ Start containers
+
+```bash
 docker-compose -f docker-compose.dev.yml up --build
+```
 
-4️⃣ Run database migrations
+## 4️⃣ Run database migrations
+
+```bash
 docker-compose -f docker-compose.dev.yml exec backend npx prisma migrate dev
+```
 
-5️⃣ (Optional) Seed the database
+## 5️⃣ (Optional) Seed the database
+
+```bash
 docker-compose -f docker-compose.dev.yml exec backend npx prisma db seed
+```
 
-🌐 Services
-Service	URL
-Frontend	http://localhost:3000
+---
 
-Backend API	http://localhost:4000/api
+# 🌐 Services
 
-Health Check	http://localhost:4000/health
-🔌 API Endpoints (Examples)
-Method	Route	                            Description
-POST	/api/auth/login	              User login
-GET	/api/clients	                     List clients
-POST	/api/tasks	                     Create task
-GET	/api/dashboard	              Dashboard metrics
-GET	/api/reports/monthly/:id/pdf	Generate PDF report
+| Service       | URL                          |
+|--------------|------------------------------|
+| Frontend     | http://localhost:3000       |
+| Backend API  | http://localhost:4000/api   |
+| Health Check | http://localhost:4000/health|
+
+---
+
+# 🔌 API Endpoints (Examples)
+
+| Method | Route                          | Description             |
+|--------|--------------------------------|-------------------------|
+| POST   | /api/auth/login                | User login              |
+| GET    | /api/clients                   | List clients            |
+| POST   | /api/tasks                     | Create task             |
+| GET    | /api/dashboard                 | Dashboard metrics       |
+| GET    | /api/reports/monthly/:id/pdf   | Generate PDF report     |
 
 All routes (except authentication and health check) require:
+
+```
 Authorization: Bearer <token>
+```
 
+---
 
-Features
+# ✨ Features
 
-User authentication
+- User authentication
+- Client management
+- Task type management
+- Task tracking
+- Hour registration
+- Expense control (recurring and single)
+- Monthly financial closure
+- Dashboard with charts
+- PDF report generation
+- Light/Dark theme
+- Responsive UI
 
-Client management
+---
 
-Task type management
+# 📈 What This Project Demonstrates
 
-Task tracking
+- Ability to transform a real-world problem into a technical solution
+- Full-stack architecture design
+- REST API development
+- Relational database modeling
+- Docker containerization
+- Clean code organization
+- Financial logic implementation
+- Product-oriented thinking
 
-Hour registration
+---
 
-Expense control (recurring and single)
+# 🔮 Future Improvements
 
-Monthly financial closure
+- Multi-user / multi-tenant system
+- SaaS subscription model
+- Payment gateway integration
+- Cloud deployment with reverse proxy
+- CI/CD pipeline
+- Automated tests
 
-Dashboard with charts
+---
 
-PDF report generation
-
-Light/Dark theme
-
-Responsive UI
-
-📈 What This Project Demonstrates
-
-Ability to transform a real-world problem into a technical solution
-
-Full-stack architecture design
-
-REST API development
-
-Relational database modeling
-
-Docker containerization
-
-Clean code organization
-
-Financial logic implementation
-
-Product-oriented thinking
-
-🔮 Future Improvements
-
-Multi-user / multi-tenant system
-
-SaaS subscription model
-
-Payment gateway integration
-
-Cloud deployment with reverse proxy
-
-CI/CD pipeline
-
-Automated tests
-
-🧑‍💻 Portfolio Purpose
+# 🧑‍💻 Portfolio Purpose
 
 This project was developed as a portfolio piece to demonstrate modern full-stack development skills and architectural decision-making.
 
-📄 License
+---
+
+# 📄 License
 
 MIT
