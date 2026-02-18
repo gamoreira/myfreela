@@ -1,0 +1,256 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// USERS
+// ========================================
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  password            String
+  name                String
+  defaultTaxPercentage Decimal? @map("default_tax_percentage") @db.Decimal(5, 2) @default(0.00)
+  isAdmin              Boolean  @default(false) @map("is_admin")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clients          Client[]
+  taskTypes        TaskType[]
+  tasks            Task[]
+  monthlyClosures  MonthlyClosures[]
+  settings         UserSettings?
+  hourRecords      HourRecord[]
+  expenses         Expense[]
+
+  @@map("users")
+}
+
+// ========================================
+// CLIENTS
+// ========================================
+model Client {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks                   Task[]
+  monthlyClosureClients   MonthlyClosureClients[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("clients")
+}
+
+// ========================================
+// TASK TYPES
+// ========================================
+model TaskType {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String
+  color     String   // Hex color code
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("task_types")
+}
+
+// ========================================
+// TASKS
+// ========================================
+enum TaskStatus {
+  pending
+  completed
+}
+
+model Task {
+  id              String     @id @default(uuid())
+  userId          String     @map("user_id")
+  clientId        String     @map("client_id")
+  taskTypeId      String     @map("task_type_id")
+  taskNumber      String     @map("task_number")
+  name            String
+  description     String?    @db.Text
+  estimatedHours  Decimal?   @map("estimated_hours") @db.Decimal(10, 2)
+  hoursSpent      Decimal    @map("hours_spent") @db.Decimal(10, 2)
+  creationDate    DateTime   @map("creation_date") @db.Date
+  status          TaskStatus @default(pending)
+  tags            Json?      // Array de strings
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  // Relationships
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  taskType    TaskType     @relation(fields: [taskTypeId], references: [id], onDelete: Restrict)
+  hourRecords HourRecord[]
+
+  @@unique([userId, taskNumber])
+  @@index([userId, creationDate])
+  @@index([userId, clientId, creationDate])
+  @@index([userId, taskTypeId, creationDate])
+  @@index([taskNumber])
+  @@map("tasks")
+}
+
+// ========================================
+// MONTHLY CLOSURES
+// ========================================
+enum ClosureStatus {
+  open
+  closed
+}
+
+model MonthlyClosures {
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  month         Int           // 1-12
+  year          Int
+  taxPercentage Decimal       @map("tax_percentage") @db.Decimal(5, 2) // % de imposto único do mês
+  hourlyRate    Decimal       @map("hourly_rate") @db.Decimal(10, 2) // Valor da hora no mês
+  status        ClosureStatus @default(open)
+  closedAt      DateTime?     @map("closed_at")
+  notes         String?       @db.Text
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  // Relationships
+  user     User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clients  MonthlyClosureClients[]
+  expenses MonthlyClosureExpense[]
+
+  @@unique([userId, month, year])
+  @@index([userId, year, month])
+  @@map("monthly_closures")
+}
+
+// ========================================
+// MONTHLY CLOSURE CLIENTS
+// ========================================
+model MonthlyClosureClients {
+  id               String   @id @default(uuid())
+  monthlyClosureId String   @map("monthly_closure_id")
+  clientId         String   @map("client_id")
+  totalHours       Decimal  @map("total_hours") @db.Decimal(10, 2)
+  grossAmount      Decimal  @map("gross_amount") @db.Decimal(10, 2) // hours × hourlyRate do faturamento
+  taxAmount        Decimal  @map("tax_amount") @db.Decimal(10, 2) // gross × (tax_percentage/100)
+  netAmount        Decimal  @map("net_amount") @db.Decimal(10, 2) // gross - tax
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  monthlyClosure MonthlyClosures @relation(fields: [monthlyClosureId], references: [id], onDelete: Cascade)
+  client         Client          @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
+  @@unique([monthlyClosureId, clientId])
+  @@index([monthlyClosureId, clientId])
+  @@map("monthly_closure_clients")
+}
+
+// ========================================
+// EXPENSES (Despesas)
+// ========================================
+model Expense {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  name        String
+  description String?  @db.Text
+  amount      Decimal  @db.Decimal(10, 2)
+  isRecurring Boolean  @default(true) @map("is_recurring")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user                   User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  monthlyClosureExpenses MonthlyClosureExpense[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("expenses")
+}
+
+// ========================================
+// MONTHLY CLOSURE EXPENSES (Despesas do )
+// ========================================
+model MonthlyClosureExpense {
+  id               String   @id @default(uuid())
+  monthlyClosureId String   @map("monthly_closure_id")
+  expenseId        String?  @map("expense_id")
+  name             String
+  description      String?  @db.Text
+  amount           Decimal  @db.Decimal(10, 2)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  monthlyClosure MonthlyClosures @relation(fields: [monthlyClosureId], references: [id], onDelete: Cascade)
+  expense        Expense?        @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+
+  @@index([monthlyClosureId])
+  @@index([expenseId])
+  @@map("monthly_closure_expenses")
+}
+
+// ========================================
+// USER SETTINGS
+// ========================================
+model UserSettings {
+  id                          String   @id @default(uuid())
+  userId                      String   @unique @map("user_id")
+  currency                    String   @default("BRL")
+  dateFormat                  String   @default("DD/MM/YYYY") @map("date_format")
+  theme                       String   @default("light")
+  allowFutureDateHourRecords  Boolean  @default(false) @map("allow_future_date_hour_records")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+// ========================================
+// HOUR RECORDS (Registros de Horas)
+// ========================================
+model HourRecord {
+  id          String   @id @default(uuid())
+  taskId      String   @map("task_id")
+  userId      String   @map("user_id")
+  workDate    DateTime @map("work_date") @db.Date
+  hoursWorked Decimal  @map("hours_worked") @db.Decimal(10, 2)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([workDate])
+  @@map("hour_records")
+}
