@@ -136,32 +136,37 @@ This eliminates manual calculation errors and provides reliable financial insigh
 
 # 📦 Project Structure
 
+The project follows a clear separation between backend, frontend and infrastructure layers.
+
 myfreela/
-├── backend/
-│ ├── src/
-│ │ ├── config/
-│ │ ├── controllers/
-│ │ ├── middleware/
-│ │ ├── routes/
-│ │ ├── types/
-│ │ ├── utils/
-│ │ └── server.ts
-│ ├── prisma/
-│ ├── Dockerfile
-│ └── Dockerfile.dev
-├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ ├── context/
-│ │ ├── pages/
-│ │ ├── services/
-│ │ ├── types/
-│ │ ├── App.tsx
-│ │ └── main.tsx
-│ ├── Dockerfile
-│ └── Dockerfile.dev
-├── docker-compose.yml
-└── docker-compose.dev.yml
+│
+├── backend/                 # REST API (Node.js + Express)
+│   ├── src/
+│   │   ├── config/          # Database and environment configuration
+│   │   ├── controllers/     # Route handlers (business logic entry point)
+│   │   ├── middleware/      # Authentication, validation, error handling
+│   │   ├── routes/          # API route definitions
+│   │   ├── types/           # TypeScript interfaces and types
+│   │   ├── utils/           # Helper utilities (JWT, helpers)
+│   │   └── server.ts        # Application entry point
+│   ├── prisma/              # Database schema, migrations and seed
+│   ├── Dockerfile           # Production container config
+│   └── Dockerfile.dev       # Development container config
+│
+├── frontend/                # React SPA
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── context/         # Global state (Auth, Theme, etc.)
+│   │   ├── pages/           # Application pages
+│   │   ├── services/        # API communication layer
+│   │   ├── types/           # Type definitions
+│   │   ├── App.tsx          # Routing & layout
+│   │   └── main.tsx         # Entry point
+│   ├── Dockerfile
+│   └── Dockerfile.dev
+│
+├── docker-compose.yml       # Production environment
+└── docker-compose.dev.yml   # Development environment
 
 ---
 
