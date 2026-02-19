@@ -54,7 +54,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       {/* Loading overlay during registration */}
       {isSubmitting && (
         <Loading fullScreen size="lg" text="Criando conta..." />
@@ -80,23 +80,23 @@ export default function Register() {
               </svg>
             </div>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-4xl font-bold text-white mb-2">
             MyFreela
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
+          <p className="text-gray-300 text-lg">
             Crie sua conta para começar
           </p>
         </div>
 
         {/* Register Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100 dark:border-gray-700">
+        <div className="bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6 border border-gray-700">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Error Alert */}
             {error && (
-              <div className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 p-4 animate-shake">
+              <div className="rounded-lg bg-red-900/30 border border-red-800 p-4 animate-shake">
                 <div className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 mr-3 flex-shrink-0"
+                    className="w-5 h-5 text-red-400 mt-0.5 mr-3 flex-shrink-0"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -106,20 +106,20 @@ export default function Register() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <div className="text-sm text-red-800 dark:text-red-300 font-medium">{error}</div>
+                  <div className="text-sm text-red-300 font-medium">{error}</div>
                 </div>
               </div>
             )}
 
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Nome
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    className="h-5 w-5 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -138,14 +138,14 @@ export default function Register() {
                   type="text"
                   autoComplete="name"
                   disabled={isSubmitting}
-                  className={`block w-full pl-10 pr-3 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border ${
-                    errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                  className={`block w-full pl-10 pr-3 py-3 bg-gray-700 text-gray-200 border ${
+                    errors.name ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-600 focus:ring-blue-500 focus:border-blue-500'
+                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-500`}
                   placeholder="Seu nome completo"
                 />
               </div>
               {errors.name && (
-                <p className="mt-2 text-sm text-red-600 flex items-center animate-fadeIn">
+                <p className="mt-2 text-sm text-red-400 flex items-center animate-fadeIn">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -160,13 +160,13 @@ export default function Register() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 E-mail
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    className="h-5 w-5 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -185,14 +185,14 @@ export default function Register() {
                   type="email"
                   autoComplete="email"
                   disabled={isSubmitting}
-                  className={`block w-full pl-10 pr-3 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border ${
-                    errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                  className={`block w-full pl-10 pr-3 py-3 bg-gray-700 text-gray-200 border ${
+                    errors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-600 focus:ring-blue-500 focus:border-blue-500'
+                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-500`}
                   placeholder="seu@email.com"
                 />
               </div>
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600 flex items-center animate-fadeIn">
+                <p className="mt-2 text-sm text-red-400 flex items-center animate-fadeIn">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -207,13 +207,13 @@ export default function Register() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Senha
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    className="h-5 w-5 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -232,14 +232,14 @@ export default function Register() {
                   type="password"
                   autoComplete="new-password"
                   disabled={isSubmitting}
-                  className={`block w-full pl-10 pr-3 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border ${
-                    errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                  className={`block w-full pl-10 pr-3 py-3 bg-gray-700 text-gray-200 border ${
+                    errors.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-600 focus:ring-blue-500 focus:border-blue-500'
+                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-500`}
                   placeholder="Mínimo 6 caracteres"
                 />
               </div>
               {errors.password && (
-                <p className="mt-2 text-sm text-red-600 flex items-center animate-fadeIn">
+                <p className="mt-2 text-sm text-red-400 flex items-center animate-fadeIn">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -254,13 +254,13 @@ export default function Register() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirmar Senha
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    className="h-5 w-5 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -279,14 +279,14 @@ export default function Register() {
                   type="password"
                   autoComplete="new-password"
                   disabled={isSubmitting}
-                  className={`block w-full pl-10 pr-3 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border ${
-                    errors.confirmPassword ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500'
-                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                  className={`block w-full pl-10 pr-3 py-3 bg-gray-700 text-gray-200 border ${
+                    errors.confirmPassword ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-600 focus:ring-blue-500 focus:border-blue-500'
+                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed placeholder:text-gray-500`}
                   placeholder="Repita sua senha"
                 />
               </div>
               {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600 flex items-center animate-fadeIn">
+                <p className="mt-2 text-sm text-red-400 flex items-center animate-fadeIn">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -303,7 +303,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg text-white font-semibold bg-[#3575DF] hover:bg-[#2d66c8] focus:outline-none focus:ring-2 focus:ring-offset-2 dark:ring-offset-gray-800 focus:ring-[#3575DF] disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg text-white font-semibold bg-[#3575DF] hover:bg-[#2d66c8] focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-gray-800 focus:ring-[#3575DF] disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? (
                 <>
@@ -351,11 +351,11 @@ export default function Register() {
 
           {/* Login Link */}
           <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-gray-300">
               Já tem uma conta?{' '}
               <Link
                 to="/login"
-                className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
+                className="font-semibold text-blue-400 hover:text-blue-300 transition-colors duration-200"
               >
                 Faça login
               </Link>
@@ -365,7 +365,7 @@ export default function Register() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-400">
             Sistema de gerenciamento de freelas
           </p>
         </div>

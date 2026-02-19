@@ -14,6 +14,13 @@ export interface AdminUser {
   };
 }
 
+export interface UpdateAdminUserDto {
+  name?: string;
+  email?: string;
+  isAdmin?: boolean;
+  password?: string;
+}
+
 export interface AdminUsersResponse {
   users: AdminUser[];
 }

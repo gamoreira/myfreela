@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Layout } from '../components/layout';
-import { Card, ConfirmDialog } from '../components/common';
+import { Button, Card, ConfirmDialog } from '../components/common';
 import { adminService } from '../services/adminService';
+import EditUserModal from '../components/admin/EditUserModal';
 import Loading from '../components/Loading';
+import { useAuth } from '../context/AuthContext';
 import type { AdminUser } from '../types/admin';
 
 export default function AdminUsers() {
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isTogglingAdmin, setIsTogglingAdmin] = useState<string | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -28,6 +33,29 @@ export default function AdminUsers() {
       setError(err.response?.data?.error || 'Erro ao carregar usuários');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditClick = (user: AdminUser) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = (updatedUser: AdminUser) => {
+    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+  };
+
+  const handleToggleAdmin = async (user: AdminUser) => {
+    if (isTogglingAdmin) return;
+    try {
+      setIsTogglingAdmin(user.id);
+      const updatedUser = await adminService.updateUser(user.id, { isAdmin: !user.isAdmin });
+      setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+    } catch (err: any) {
+      console.error('Erro ao alterar tipo do usuário:', err);
+      setError(err.response?.data?.error || 'Erro ao alterar tipo do usuário');
+    } finally {
+      setIsTogglingAdmin(null);
     }
   };
 
@@ -219,18 +247,44 @@ export default function AdminUsers() {
                       <div className="text-sm text-gray-600 dark:text-gray-300">{user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {user.isAdmin ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400">
-                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                          </svg>
-                          Admin
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
-                          Usuário
-                        </span>
-                      )}
+                      {(() => {
+                        const isSelf = user.id === currentUser?.id;
+                        const canToggle = !isSelf;
+                        const isToggling = isTogglingAdmin === user.id;
+
+                        return (
+                          <button
+                            onClick={() => canToggle && handleToggleAdmin(user)}
+                            disabled={!canToggle || isToggling}
+                            title={
+                              isSelf
+                                ? 'Não é possível alterar seu próprio tipo'
+                                : `Clique para tornar ${user.isAdmin ? 'usuário regular' : 'administrador'}`
+                            }
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                              canToggle && !isToggling
+                                ? 'cursor-pointer hover:opacity-75'
+                                : 'cursor-default'
+                            } ${
+                              user.isAdmin
+                                ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                            }`}
+                          >
+                            {isToggling ? (
+                              <svg className="w-3 h-3 mr-1 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                            ) : user.isAdmin ? (
+                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                              </svg>
+                            ) : null}
+                            {user.isAdmin ? 'Admin' : 'Usuário'}
+                          </button>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600 dark:text-gray-300">
                       {user._count.clients}
@@ -245,21 +299,34 @@ export default function AdminUsers() {
                       {formatDate(user.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleDeleteClick(user)}
-                        disabled={user.isAdmin}
-                        className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          user.isAdmin
-                            ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                            : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300'
-                        }`}
-                        title={user.isAdmin ? 'Não é possível excluir administradores' : 'Excluir usuário'}
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Excluir
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditClick(user)}
+                          icon={
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          }
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteClick(user)}
+                          disabled={user.isAdmin}
+                          title={user.isAdmin ? 'Não é possível excluir administradores' : 'Excluir usuário'}
+                          icon={
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          }
+                        >
+                          Excluir
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -269,8 +336,21 @@ export default function AdminUsers() {
         </Card>
       </div>
 
+      {/* Edit User Modal */}
+      {selectedUser && isEditModalOpen && (
+        <EditUserModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedUser(null);
+          }}
+          onSuccess={handleEditSuccess}
+          user={selectedUser}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
-      {selectedUser && (
+      {selectedUser && isDeleteModalOpen && (
         <ConfirmDialog
           isOpen={isDeleteModalOpen}
           onClose={() => {
