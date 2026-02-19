@@ -44,7 +44,7 @@ services:
         condition: service_healthy
     networks:
       - myfreela_network
-    command: sh -c "npx prisma generate && npm run dev"
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run dev"
 
   frontend:
     build:

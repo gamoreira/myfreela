@@ -1,8 +1,12 @@
+import dotenv from 'dotenv';
+
+// Load environment variables FIRST, before any other imports
+dotenv.config();
+
 import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import clientsRoutes from './routes/clientsRoutes';
 import taskTypesRoutes from './routes/taskTypesRoutes';
@@ -15,9 +19,6 @@ import settingsRoutes from './routes/settingsRoutes';
 import expensesRoutes from './routes/expensesRoutes';
 import usersRoutes from './routes/usersRoutes';
 import { errorHandler } from './middleware/errorHandler';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
