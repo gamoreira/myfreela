@@ -188,20 +188,21 @@ cp backend/.env.example backend/.env
 ## 3️⃣ Start containers
 
 ```bash
-docker-compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build -d
 ```
 
-## 4️⃣ Run database migrations
+> Migrations are applied automatically on container startup.
 
-```bash
-docker-compose -f docker-compose.dev.yml exec backend npx prisma migrate dev
-```
-
-## 5️⃣ (Optional) Seed the database
+## 4️⃣ (Optional) Seed the database
 
 ```bash
 docker-compose -f docker-compose.dev.yml exec backend npx prisma db seed
 ```
+
+> To create new migrations after schema changes:
+> ```bash
+> docker-compose -f docker-compose.dev.yml exec backend npx prisma migrate dev
+> ```
 
 ---
 
