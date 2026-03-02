@@ -9,6 +9,7 @@ pnpm-debug.log*
 .env
 .env.local
 .env.*.local
+.env.portainer
 backend/.env
 frontend/.env
 
